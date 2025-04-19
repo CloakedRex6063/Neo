@@ -1,0 +1,8 @@
+.idea/
+Build/
+Intermediate/
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.sln.DotSettings.user
