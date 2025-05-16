@@ -84,7 +84,7 @@ namespace Neo
         ImGui::DestroyContext();
     }
 
-    void EditorBackend::Update() const
+    void EditorBackend::Update()
     {
         ImGui_ImplDX12_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -92,11 +92,11 @@ namespace Neo
         ImGui::DockSpaceOverViewport();
     }
 
-    void EditorBackend::Begin(const std::string_view name) const { ImGui::Begin(name.data()); }
+    void EditorBackend::Begin(const std::string_view name) { ImGui::Begin(name.data()); }
 
-    void EditorBackend::End() const { ImGui::End(); }
+    void EditorBackend::End() { ImGui::End(); }
 
-    void EditorBackend::BeginStatsBar(const float height) const
+    void EditorBackend::BeginStatsBar(const float height)
     {
         constexpr ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings |
             ImGuiWindowFlags_MenuBar;
@@ -106,37 +106,37 @@ namespace Neo
         ImGui::BeginMenuBar();
     }
 
-    void EditorBackend::EndStatsBar() const
+    void EditorBackend::EndStatsBar()
     {
         ImGui::EndMenuBar();
         ImGui::End();
     }
 
-    void EditorBackend::StatsBarEntry(const std::function<void()>& func) const
+    void EditorBackend::StatsBarEntry(const std::function<void()>& func)
     {
         BeginStatsBar(25.f);
         func();
         EndStatsBar();
     }
 
-    void EditorBackend::PushFont(const int index) const
+    void EditorBackend::PushFont(const int index)
     {
         ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[index]);
     }
 
-    void EditorBackend::PopFont() const
+    void EditorBackend::PopFont()
     {
         ImGui::PopFont();
     }
 
-    void EditorBackend::Image(const RenderTargetHandle renderTargetHandle) const
+    void EditorBackend::Image(const RenderTargetHandle renderTargetHandle)
     {
         const auto descriptor = static_cast<DX12::Descriptor*>(Engine.Renderer().GetRenderContext()->
                                                                       GetTextureDescriptor(renderTargetHandle));
         ImGui::Image(descriptor->Gpu.ptr, ImGui::GetContentRegionAvail());
     }
 
-    void EditorBackend::Text(const std::string_view text) const
+    void EditorBackend::Text(const std::string_view text)
     {
         ImGui::Text(text.data());
     }
@@ -237,14 +237,13 @@ namespace Neo
         io.Fonts->Clear();
         ImFontConfig config;
         config.SizePixels = 20.0f;
-        io.Fonts->AddFontFromFileTTF(Engine.FileIO().GetPath(FileIO::Directory::eAssets, "JetbrainsMono.ttf").c_str(),
-                                     20, &config);
+        io.Fonts->AddFontFromFileTTF("Assets/JetbrainsMono.ttf", 20, &config);
 
         config.MergeMode = true;
         config.GlyphOffset.y = 3.5f;
         static constexpr uint16_t iconRanges[] = {0xE003, 0xF8FF, 0};
         io.Fonts->AddFontFromFileTTF(
-            Engine.FileIO().GetPath(FileIO::Directory::eAssets, "MaterialSymbolsRounded.ttf").c_str(),
+            "Assets/MaterialSymbolsRounded.ttf",
             20, &config, iconRanges);
         io.Fonts->Build();
     }

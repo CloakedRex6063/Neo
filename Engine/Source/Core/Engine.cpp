@@ -12,7 +12,6 @@ namespace Neo
     void EngineClass::Init()
     {
         Log::Init();
-        mFileIO = new Neo::FileIO();
         mECS = new Neo::ECS();
         mDevice = new Neo::Device();
         mRenderer = new Neo::Renderer();
@@ -26,7 +25,7 @@ namespace Neo
         //     .Version = "0.0.1"
         // };
         // const auto path = std::filesystem::current_path().generic_string() + "/" + "Sandbox";
-        // mProjectBuilder->GenerateProject(info, path);
+        //mProject->GenerateProject(info, path);
         mProject->LoadProject(std::filesystem::current_path().generic_string() + "/" + "Sandbox/Sandbox.proj");
     }
 
@@ -35,7 +34,6 @@ namespace Neo
         delete mDevice;
         delete mScripting;
         delete mECS;
-        delete mFileIO;
         delete mProject;
         delete mRenderer;
     }

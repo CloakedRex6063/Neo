@@ -6,6 +6,7 @@
 #include "Panel/IEditorPanel.hpp"
 #include "Panel/ViewportPanel.hpp"
 #include "MaterialIcons.h"
+#include "Tools/Importer.hpp"
 
 namespace Neo
 {
@@ -16,10 +17,12 @@ namespace Neo
         AddPanel<DetailsPanel>();
         AddPanel<OutlinerPanel>();
         [[maybe_unused]]
-        const auto entity = Engine.ECS().CreateEntity("Hello");
+            const auto entity = Engine.ECS().CreateEntity("Hello");
         const auto child = Engine.ECS().CreateEntity("Hello2");
         Engine.ECS().AddChild(entity, child);
         mSelectedEntity = entity;
+        Importer::ImportGLTF(FileIO::GetPath(Location::eProject, "Assets/Models/Drift/Drift.gltf"),
+                             FileIO::GetPath(Location::eProject, "Assets/Models/Drift/"));
     }
 
     void Editor::Update()

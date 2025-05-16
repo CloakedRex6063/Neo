@@ -1,9 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <LangVersion>6.0</LangVersion>
-        <TargetFramework>net4.5</TargetFramework>
-        <BaseIntermediateOutputPath>Intermediate</BaseIntermediateOutputPath>
-    </PropertyGroup>
-
-</Project>

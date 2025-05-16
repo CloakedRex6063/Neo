@@ -1,37 +1,37 @@
 #include "Project/ProjectBuilder.hpp"
 
-#include "simdjson.h"
-#include "nlohmann/json.hpp"
+#include "Core/FileIO.hpp"
+#include "glaze/glaze.hpp"
 
 namespace Neo
 {
-    void Project::LoadProject(const std::filesystem::path& projectPath)
+    bool Project::LoadProject(const std::filesystem::path& projectPath)
     {
-        simdjson::dom::parser parser;
-        const simdjson::dom::element doc = parser.load(projectPath.generic_string());
-        
+        const auto ec = glz::read_file_json(mProjectData.Info, projectPath.generic_string(), std::string{}).ec;
+        if (ec != glz::error_code::none)
+        {
+            Log::Error("Failed to load project");
+            return false;
+        }
+
         mProjectData = ProjectData
         {
-            .Info = {.Name = std::string(doc["Project"]["Name"]), .Version = std::string(doc["Project"]["Version"])},
-            .Path = projectPath.string(),
+            .Path = projectPath.parent_path().string(),
         };
+        Log::Info("Loaded project: {}", mProjectData.Path);
+        return true;
     }
 
-    void Project::GenerateProject(const ProjectInfo& projectInfo, const std::filesystem::path& projectPath) const
+    bool Project::GenerateProject(const ProjectInfo& projectInfo, const std::filesystem::path& projectPath)
     {
-        nlohmann::json json;
-        json["Project"]["Name"] = projectInfo.Name;
-        json["Project"]["Version"] = projectInfo.Version;
-
         if (!std::filesystem::exists(projectPath))
         {
             std::filesystem::create_directory(projectPath);
         }
 
-        std::string filePath = projectPath.string() + "/" + projectInfo.Name + ".proj";
-        
-        std::ofstream file(filePath);
-        file << json.dump(4);
-        file.close();
+        const std::string filePath = projectPath.string() + "/" + projectInfo.Name + ".proj";
+
+        const auto result = glz::write_file_json(projectInfo, filePath, std::string{});
+        return result.ec == glz::error_code::none;
     }
 }

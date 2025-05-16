@@ -130,16 +130,16 @@ namespace Neo
                                 D3D12_RESOURCE_STATES newState);
 
         RenderContextCreateInfo mArgs;
-        IDXGIFactory7* mFactory;
-        IDXGIAdapter4* mAdapter;
-        IDXGISwapChain4* mSwapchain;
-        ID3D12Device14* mDevice;
-        ID3D12CommandQueue* mGraphicsQueue;
-        ID3D12Fence1* mGraphicsFence;
-        ID3D12CommandQueue* mTransferQueue;
-        ID3D12Fence1* mTransferFence;
+        IDXGIFactory7* mFactory = nullptr;
+        IDXGIAdapter4* mAdapter = nullptr;
+        IDXGISwapChain4* mSwapchain = nullptr;
+        ID3D12Device14* mDevice = nullptr;
+        ID3D12CommandQueue* mGraphicsQueue = nullptr;
+        ID3D12Fence1* mGraphicsFence = nullptr;
+        ID3D12CommandQueue* mTransferQueue = nullptr;
+        ID3D12Fence1* mTransferFence = nullptr;
         u64 mTransferFenceValue = 0;
-        ID3D12RootSignature* mRootSignature;
+        ID3D12RootSignature* mRootSignature = nullptr;
 
         DX12::DescriptorAllocator mCBVUAVSRVAllocator;
         DX12::DescriptorAllocator mRTVAllocator;

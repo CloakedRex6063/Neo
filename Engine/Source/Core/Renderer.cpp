@@ -40,9 +40,11 @@ namespace Neo
         mContext->EndCommand(mTransferCommand);
         mContext->OneTimeSubmit({mTransferCommand}, QueueType::eTransfer);
 
+        mContext->DestroyBuffer(uploadBuffer);
+
         const GraphicsShaderCreateInfo shaderCreateInfo{
-            .VertexCode = Engine.FileIO().ReadBinaryFile(FileIO::Directory::eShaders, "GeomVS.cso"),
-            .FragmentCode = Engine.FileIO().ReadBinaryFile(FileIO::Directory::eShaders, "GeomPS.cso"),
+            .VertexCode = FileIO::ReadBinaryFile("Shaders/GeomVS.cso"),
+            .FragmentCode = FileIO::ReadBinaryFile("Shaders/GeomPS.cso"),
             .PrimitiveTopology = PrimitiveTopology::eTriangle,
             .RenderTargetFormats = {Format::eB8G8R8A8_UNORM},
             .NumRenderTargets = 1,
@@ -61,16 +63,16 @@ namespace Neo
 
         RenderPass renderPass
         {
-            .Execute = []
+            .Execute = [&]
             {
                 const auto& context = Engine.Renderer().GetRenderContext();
                 const auto& command = context->GetFrameData().CommandHandle;
                 const RenderPassInfo renderPassInfo{
-                    .RenderTargets = {Engine.Renderer().mRenderTarget},
+                    .RenderTargets = {mRenderTarget},
                     .ClearColor = glm::vec4(0.392f, 0.584f, 0.929f, 1.0f),
                 };
                 context->BeginRenderPass(command, renderPassInfo);
-                context->BindShader(command, Engine.Renderer().mTriangleShader);
+                context->BindShader(command, mTriangleShader);
                 context->SetPrimitiveTopology(command, PrimitiveTopology::eTriangle);
                 const Viewport viewport{.Dimensions = Engine.Device().GetWindowSize()};
                 context->SetViewport(command, viewport);
@@ -81,7 +83,7 @@ namespace Neo
                 {
                     u32 index = 0;
                 } pc{
-                        .index = context->GetGPUAddress(Engine.Renderer().mVertexBuffer),
+                        .index = context->GetGPUAddress(mVertexBuffer),
                     };
                 context->PushConstant(command, 1, &pc);
                 context->Draw(command, 3, 1, 0, 0);
@@ -92,8 +94,7 @@ namespace Neo
     }
 
     Renderer::~Renderer()
-    {
-    }
+    = default;
 
     void Renderer::Update(float)
     {

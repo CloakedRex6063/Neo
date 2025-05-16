@@ -7,7 +7,7 @@ namespace Neo::DX12
 {
     struct Heap
     {
-        ID3D12Heap* BaseHeap;
+        ID3D12Heap* BaseHeap = nullptr;
         u32 Size = 0;
         u32 Offset = 0;
     };
@@ -32,7 +32,16 @@ namespace Neo::DX12
 
         Descriptor Allocate()
         {
-            const uint32_t index = At++;
+            u32 index;
+            if (FreeIndices.empty())
+            {
+                index = At++;
+            }
+            else
+            {
+                index = FreeIndices.back();
+                FreeIndices.pop_back();
+            }
 
             return {
                 .Cpu = {CpuBase.ptr + Stride * index},
@@ -43,7 +52,7 @@ namespace Neo::DX12
 
         void Free(const Descriptor& descriptor) { FreeIndices.push_back(descriptor.Index); }
 
-        void Free(const D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle, const D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle) const
+        void Free(const D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle, const D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle) 
         {
             const int cpuIdx = static_cast<int>((cpuHandle.ptr - CpuBase.ptr) / Stride);
             const int gpuIdx = static_cast<int>((gpuHandle.ptr - GpuBase.ptr) / Stride);
@@ -51,18 +60,19 @@ namespace Neo::DX12
             {
                 ThrowError("Freeing an incorrect Descriptor");
             }
+            FreeIndices.push_back(cpuIdx);
         }
     };
 
     struct Command
     {
-        ID3D12CommandAllocator* CommandAllocator{};
-        ID3D12GraphicsCommandList10* CommandList{};
+        ID3D12CommandAllocator* CommandAllocator = nullptr;
+        ID3D12GraphicsCommandList10* CommandList = nullptr;
     };
 
     struct Resource
     {
-        ID3D12Resource2* BaseResource;
+        ID3D12Resource2* BaseResource = nullptr;
         D3D12_RESOURCE_STATES ResourceState = D3D12_RESOURCE_STATE_COMMON;
     };
 

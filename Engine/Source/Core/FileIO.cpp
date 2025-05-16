@@ -1,23 +1,32 @@
 #include "Core/FileIO.hpp"
+#include "Core/Engine.hpp"
+#include "Project/ProjectBuilder.hpp"
 #include "Tools/Log.hpp"
 
 namespace Neo
 {
-    FileIO::FileIO()
+    std::string FileIO::GetPath(const Location directory, const std::string_view path)
     {
-        mPaths[Directory::eAssets] = "Assets/";
-        mPaths[Directory::eSaveFiles] = "Saves/";
-        mPaths[Directory::eShaders] = "Shaders/";
-        mPaths[Directory::eNone] = "";
+        std::string fullPath;
+        switch (directory)
+        {
+        case Location::eEngine:
+            fullPath = path;
+            break;
+        case Location::eProject:
+            fullPath = std::string(Engine.Project().GetProjectPath()) + '/' + std::string(path);
+            break;
+        }
+        return fullPath;
     }
 
-    std::string FileIO::ReadTextFile(const Directory type, const std::string_view path) const
+    std::string FileIO::ReadTextFile(const std::string_view path)
     {
-        const auto fullPath = GetPath(type, path);
-        std::ifstream file(fullPath, std::ios::in);
+
+        const std::ifstream file(path.data(), std::ios::in);
         if (!file.is_open())
         {
-            Log::Error("File {} with full path {} was not found!", path, fullPath);
+            Log::Error("File {}  was not found!", path);
             return {};
         }
 
@@ -26,13 +35,12 @@ namespace Neo
         return buffer.str();
     }
 
-    bool FileIO::WriteTextFile(const Directory type, const std::string_view path, const std::string_view content) const
+    bool FileIO::WriteTextFile(const std::string_view path, const std::string_view content)
     {
-        const auto fullPath = GetPath(type, path);
-        std::ofstream file(fullPath);
+        std::ofstream file(path.data());
         if (!file.is_open())
         {
-            Log::Error("File {} with full path {} was not found!", path, fullPath);
+            Log::Error("File {} was not found!", path);
             return false;
         }
         file << content;
@@ -40,13 +48,12 @@ namespace Neo
         return true;
     }
 
-    std::vector<char> FileIO::ReadBinaryFile(const Directory type, const std::string_view path) const
+    std::vector<char> FileIO::ReadBinaryFile(const std::string_view path)
     {
-        const auto fullPath = GetPath(type, path);
-        std::ifstream file(fullPath, std::ios::binary | std::ios::ate);
+        std::ifstream file(path.data(), std::ios::binary | std::ios::ate);
         if (!file.is_open())
         {
-            Log::Error("File {} with full path {} was not found!", path, fullPath);
+            Log::Error("File {} was not found!", path);
             return {};
         }
         const int64_t size = file.tellg();
@@ -58,13 +65,12 @@ namespace Neo
         return {};
     }
 
-    bool FileIO::WriteBinaryFile(const Directory type, const std::string_view path, const std::vector<char>& content) const
+    bool FileIO::WriteBinaryFile(const std::string_view path, const std::vector<char>& content)
     {
-        const auto fullPath = GetPath(type, path);
-        std::ofstream file(fullPath, std::ios::binary);
+        std::ofstream file(path.data(), std::ios::binary);
         if (!file.is_open())
         {
-            Log::Error("File {} with full path {} was not found!", path, fullPath);
+            Log::Error("File {} was not found!", path);
             return false;
         }
         file.write(content.data(), static_cast<int64_t>(content.size()));
@@ -72,22 +78,16 @@ namespace Neo
         return true;
     }
 
-    std::string FileIO::GetPath(const Directory type, const std::string_view path) const
+    bool FileIO::Exists(const std::string_view path)
     {
-        const std::filesystem::path dir = mPaths.at(type);
-        return std::filesystem::absolute(mPaths.at(type) + path.data()).string();
+
+        return !std::filesystem::exists(path);
     }
 
-    bool FileIO::Exists(const Directory type, const std::string_view path) const
+    uint64_t FileIO::LastModified(const std::string_view path)
     {
-        const auto fullPath = GetPath(type, path);
-        return !std::filesystem::exists(fullPath);
-    }
 
-    uint64_t FileIO::LastModified(const Directory type, const std::string_view path) const
-    {
-        const auto fullPath = GetPath(type, path);
-        const std::filesystem::file_time_type fTime = std::filesystem::last_write_time(fullPath);
+        const std::filesystem::file_time_type fTime = std::filesystem::last_write_time(path);
         return static_cast<uint64_t>(fTime.time_since_epoch().count());
     }
 } // namespace FS

@@ -27,4 +27,9 @@ namespace Neo
 
         return result;
     }
+
+    inline AssetID GenerateUUID()
+    {
+        return uuids::uuid_system_generator{}();
+    }
 }

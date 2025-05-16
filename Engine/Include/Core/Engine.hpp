@@ -25,7 +25,6 @@ namespace Neo
         [[nodiscard]] Device& Device() const { return *mDevice; }
         [[nodiscard]] Renderer& Renderer() const { return *mRenderer; }
         [[nodiscard]] Scripting& Scripting() const { return *mScripting; }
-        [[nodiscard]] FileIO& FileIO() const { return *mFileIO; }
         [[nodiscard]] Project& Project() const { return *mProject; }
         [[nodiscard]] Resources& Resources() const { return *mResources; }
         [[nodiscard]] ECS& ECS() const { return *mECS; }
@@ -36,7 +35,6 @@ namespace Neo
         Neo::Device* mDevice = nullptr;
         Neo::Renderer* mRenderer = nullptr;
         Neo::Scripting* mScripting = nullptr;
-        Neo::FileIO* mFileIO = nullptr;
         Neo::Project* mProject = nullptr;
         Neo::Resources* mResources = nullptr;
         Neo::ECS* mECS = nullptr;

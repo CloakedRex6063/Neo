@@ -16,8 +16,9 @@ namespace Neo
     class Project
     {
     public:
-        void LoadProject(const std::filesystem::path& projectPath);
-        void GenerateProject(const ProjectInfo& projectInfo, const std::filesystem::path& projectPath) const;
+        bool LoadProject(const std::filesystem::path& projectPath);
+        static bool GenerateProject(const ProjectInfo& projectInfo, const std::filesystem::path& projectPath);
+        [[nodiscard]] std::string_view GetProjectPath() const { return mProjectData.Path; }
 
     private:
         ProjectData mProjectData;

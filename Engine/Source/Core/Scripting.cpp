@@ -69,9 +69,9 @@ namespace Neo
         }
     }
 
-    MonoAssembly* Scripting::LoadAssembly(const std::string_view assemblyPath) const
+    MonoAssembly* Scripting::LoadAssembly(const std::string_view assemblyPath)
     {
-        const auto code = Engine.FileIO().ReadBinaryFile(FileIO::Directory::eNone, assemblyPath);
+        const auto code = FileIO::ReadBinaryFile(assemblyPath);
         MonoImageOpenStatus status;
         auto* monoData = const_cast<char*>(code.data());
         auto* image = mono_image_open_from_data_full(monoData, code.size(), 1, &status, 0);

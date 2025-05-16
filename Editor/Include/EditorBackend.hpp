@@ -10,20 +10,20 @@ namespace Neo
         EditorBackend();
         ~EditorBackend();
 
-        void Update() const;
-        void Begin(std::string_view name) const;
-        void End() const;
+        static void Update();
+        static void Begin(std::string_view name);
+        static void End();
 
-        void BeginStatsBar(float height) const;
-        void EndStatsBar() const;
+        static void BeginStatsBar(float height);
+        static void EndStatsBar();
 
-        void StatsBarEntry(const std::function<void()>& func) const;
-        
-        void PushFont(int index) const;
-        void PopFont() const;
-        
-        void Image(RenderTargetHandle renderTargetHandle) const;
-        void Text(std::string_view text) const;
+        static void StatsBarEntry(const std::function<void()>& func);
+
+        static void PushFont(int index);
+        static void PopFont();
+
+        static void Image(RenderTargetHandle renderTargetHandle);
+        static void Text(std::string_view text);
 
         void Inspect(std::string_view name, int* value) const;
         void Inspect(std::string_view name, float* value) const;
